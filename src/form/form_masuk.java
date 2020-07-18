@@ -5,6 +5,7 @@
  */
 package form;
 
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import koneksi.koneksi;
 
 /**
@@ -26,6 +28,7 @@ public class form_masuk extends javax.swing.JFrame {
     private ResultSet rs;
     private String sql = "";
     public static Integer user_id;
+    private String tasklist, start_time, start_time_hidden;
 
     /**
      * Creates new form form_masuk
@@ -42,13 +45,14 @@ public class form_masuk extends javax.swing.JFrame {
             tf_name.setEditable(false);
             tf_npk.setText(rs.getString("npk"));
             tf_npk.setEditable(false);
-            tf_start_time.setText(new SimpleDateFormat("dd MMM yyyy hh:mm ").format(new Date())+"WIB");
+            tf_start_time.setText(new SimpleDateFormat("dd MMM yyyy hh:mm ").format(new Date()) + "WIB");
+            start_time_hidden = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss ").format(new Date());
             tf_start_time.setEditable(false);
         }
     }
 
     public static void setUserId(Integer user_id) {
-        menu_utama.user_id = user_id;
+        form_masuk.user_id = user_id;
     }
 
     public static Integer getUserId() {
@@ -78,7 +82,6 @@ public class form_masuk extends javax.swing.JFrame {
         btn_cancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(688, 450));
 
         jLabel1.setText("NPK");
 
@@ -112,6 +115,11 @@ public class form_masuk extends javax.swing.JFrame {
         jLabel6.setText("Form Masuk");
 
         btn_submit.setText("Submit");
+        btn_submit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_submitActionPerformed(evt);
+            }
+        });
 
         btn_cancel.setText("Cancel");
         btn_cancel.addActionListener(new java.awt.event.ActionListener() {
@@ -191,56 +199,76 @@ public class form_masuk extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tf_npkActionPerformed
 
-    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
+    private void btn_submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_submitActionPerformed
         // TODO add your handling code here:
-        menu_utama m;
+        tasklist = String.valueOf(tf_tasklist.getText());
+        if (tasklist == null) {
+            JOptionPane.showMessageDialog(null, "Maaf, tasklist belum diinput");
+        }
         try {
-            m = new menu_utama(user_id);
-            dispose();
+            sql = "INSERT INTO activities (start_time, tasklist, user_id) "
+                    + "VALUE ('" + start_time_hidden + "','" + tasklist + "'," + user_id + ")";
+            System.out.println("sql" + sql);
+            st = con.createStatement();
+            st.execute(sql);
+            JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan");
+            menu_utama m = new menu_utama(user_id);
             m.setVisible(true);
+            dispose();
+        } catch (SQLException | HeadlessException e) {
+            JOptionPane.showMessageDialog(null, "Data Gagal disimpan \n" + e.getMessage());
+        }
+    }//GEN-LAST:event_btn_submitActionPerformed
+
+    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
+        try {
+            // TODO add your handling code here:
+            menu_utama m = new menu_utama(user_id);
+            m.setVisible(true);
+            dispose();
         } catch (SQLException ex) {
             Logger.getLogger(form_masuk.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btn_cancelActionPerformed
 
 //    /**
-//     * @param args the command line arguments
-//     */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(form_masuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(form_masuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(form_masuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(form_masuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                try {
-//                    new form_masuk().setVisible(true);
-//                } catch (SQLException ex) {
-//                    Logger.getLogger(form_masuk.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        });
-//    }
+    //     * @param args the command line arguments
+    //     */
+    //    public static void main(String args[]) {
+    //        /* Set the Nimbus look and feel */
+    //        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+    //        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    //         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+    //         */
+    //        try {
+    //            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+    //                if ("Nimbus".equals(info.getName())) {
+    //                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+    //                    break;
+    //                }
+    //            }
+    //        } catch (ClassNotFoundException ex) {
+    //            java.util.logging.Logger.getLogger(form_masuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    //        } catch (InstantiationException ex) {
+    //            java.util.logging.Logger.getLogger(form_masuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    //        } catch (IllegalAccessException ex) {
+    //            java.util.logging.Logger.getLogger(form_masuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    //        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+    //            java.util.logging.Logger.getLogger(form_masuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    //        }
+    //        //</editor-fold>
+    //
+    //        /* Create and display the form */
+    //        java.awt.EventQueue.invokeLater(new Runnable() {
+    //            public void run() {
+    //                try {
+    //                    new form_masuk().setVisible(true);
+    //                } catch (SQLException ex) {
+    //                    Logger.getLogger(form_masuk.class.getName()).log(Level.SEVERE, null, ex);
+    //                }
+    //            }
+    //        });
+    //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_cancel;

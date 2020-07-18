@@ -5,12 +5,16 @@
  */
 package form;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import koneksi.koneksi;
 
 /**
@@ -18,7 +22,7 @@ import koneksi.koneksi;
  * @author danielmanullang
  */
 public class menu_utama extends javax.swing.JFrame {
-    
+
     private final Connection con = new koneksi().connect();
     private Statement st;
     private ResultSet rs;
@@ -31,20 +35,28 @@ public class menu_utama extends javax.swing.JFrame {
     public menu_utama(Integer user_id) throws SQLException {
         initComponents();
         setUserId(user_id);
-        System.out.println("user_id " + user_id);
-        sql = "SELECT * FROM users "
-                + "where id='" + user_id + "'";
+        sql = "SELECT * FROM users where id='" + user_id + "'";
         st = con.createStatement();
         rs = st.executeQuery(sql);
         if (rs.first()) {
             text_name.setText(rs.getString("name"));
+            sql = "SELECT * FROM activities where user_id=" + user_id + " and end_time is null";
+            System.out.println("sql " + sql);
+            st = con.createStatement();
+            rs = st.executeQuery(sql);
+            System.out.println("rs.first() " + rs.first());
+            if (rs.first()) {
+                btn_form_masuk.setVisible(false);
+            } else {
+                btn_form_keluar.setVisible(false);
+            }
         }
     }
-    
+
     public static void setUserId(Integer user_id) {
         menu_utama.user_id = user_id;
     }
-    
+
     public static Integer getUserId() {
         return user_id;
     }
@@ -150,7 +162,7 @@ public class menu_utama extends javax.swing.JFrame {
     private void btn_form_masukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_form_masukActionPerformed
         try {
             // TODO add your handling code here:
-            form_masuk m = new form_masuk(getUserId());
+            form_masuk m = new form_masuk(user_id);
             m.setVisible(true);
             dispose();
         } catch (SQLException ex) {
@@ -161,10 +173,12 @@ public class menu_utama extends javax.swing.JFrame {
     private void btn_form_keluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_form_keluarActionPerformed
         try {
             // TODO add your handling code here:
-            form_keluar k = new form_keluar(getUserId());
+            form_keluar k = new form_keluar(user_id);
             k.setVisible(true);
             dispose();
         } catch (SQLException ex) {
+            Logger.getLogger(menu_utama.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(menu_utama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btn_form_keluarActionPerformed
