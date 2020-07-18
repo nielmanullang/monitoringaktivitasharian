@@ -5,8 +5,6 @@
  */
 package form;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +12,6 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
 import koneksi.koneksi;
 
 /**
@@ -40,15 +37,25 @@ public class menu_utama extends javax.swing.JFrame {
         rs = st.executeQuery(sql);
         if (rs.first()) {
             text_name.setText(rs.getString("name"));
-            sql = "SELECT * FROM activities where user_id=" + user_id + " and end_time is null";
-            System.out.println("sql " + sql);
-            st = con.createStatement();
-            rs = st.executeQuery(sql);
-            System.out.println("rs.first() " + rs.first());
-            if (rs.first()) {
+            System.out.println("role "+rs.getString("role"));
+            if (rs.getString("role").equals("ADMIN")) {
+                btn_form_users.setVisible(true);
                 btn_form_masuk.setVisible(false);
-            } else {
                 btn_form_keluar.setVisible(false);
+            } else {
+                sql = "SELECT * FROM activities where user_id=" + user_id + " and end_time is null";
+                System.out.println("sql " + sql);
+                st = con.createStatement();
+                rs = st.executeQuery(sql);
+                System.out.println("rs.first() " + rs.first());
+                btn_form_users.setVisible(false);
+                if (rs.first()) {
+                    btn_form_masuk.setVisible(false);
+                    btn_form_keluar.setVisible(true);
+                } else {
+                    btn_form_keluar.setVisible(false);
+                    btn_form_masuk.setVisible(true);
+                }
             }
         }
     }
@@ -74,10 +81,13 @@ public class menu_utama extends javax.swing.JFrame {
         btn_form_masuk = new javax.swing.JButton();
         btn_form_keluar = new javax.swing.JButton();
         btn_form_laporan = new javax.swing.JButton();
-        btn_keluar = new javax.swing.JButton();
+        btn_form_users = new javax.swing.JButton();
         text_name = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        log_logout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(700, 450));
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -97,21 +107,30 @@ public class menu_utama extends javax.swing.JFrame {
             }
         });
 
-        btn_form_laporan.setText("Laporan");
+        btn_form_laporan.setText("Report");
         btn_form_laporan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_form_laporanActionPerformed(evt);
             }
         });
 
-        btn_keluar.setText("Keluar");
-        btn_keluar.addActionListener(new java.awt.event.ActionListener() {
+        btn_form_users.setText("Data Users");
+        btn_form_users.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_keluarActionPerformed(evt);
+                btn_form_usersActionPerformed(evt);
             }
         });
 
         text_name.setText("Nama");
+
+        jLabel2.setText("Selamat Datang, ");
+
+        log_logout.setText("Log Out");
+        log_logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                log_logoutActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -124,37 +143,45 @@ public class menu_utama extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btn_form_masuk, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(text_name)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btn_form_keluar, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btn_form_laporan, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btn_keluar, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btn_form_keluar, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btn_form_users, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btn_form_laporan, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(log_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(87, 87, 87)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(text_name)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btn_form_keluar, btn_form_laporan, btn_form_masuk, btn_keluar});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btn_form_keluar, btn_form_laporan, btn_form_masuk, btn_form_users, log_logout});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(text_name)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(text_name))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_form_masuk, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_form_keluar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_form_laporan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_keluar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(log_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_form_users, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(42, 42, 42))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_form_keluar, btn_form_laporan, btn_form_masuk, btn_keluar});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_form_keluar, btn_form_laporan, btn_form_masuk, btn_form_users, log_logout});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -190,10 +217,23 @@ public class menu_utama extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_btn_form_laporanActionPerformed
 
-    private void btn_keluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_keluarActionPerformed
+    private void btn_form_usersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_form_usersActionPerformed
         // TODO add your handling code here:
-        System.exit(0);
-    }//GEN-LAST:event_btn_keluarActionPerformed
+        try {
+            form_users u = new form_users(user_id);
+            u.setVisible(true);
+            dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(menu_utama.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_form_usersActionPerformed
+
+    private void log_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_log_logoutActionPerformed
+        // TODO add your handling code here:
+        form_login l = new form_login();
+        l.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_log_logoutActionPerformed
 
 //    /**
 //     * @param args the command line arguments
@@ -238,8 +278,10 @@ public class menu_utama extends javax.swing.JFrame {
     private javax.swing.JButton btn_form_keluar;
     private javax.swing.JButton btn_form_laporan;
     private javax.swing.JButton btn_form_masuk;
-    private javax.swing.JButton btn_keluar;
+    private javax.swing.JButton btn_form_users;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton log_logout;
     private javax.swing.JLabel text_name;
     // End of variables declaration//GEN-END:variables
 }
