@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import koneksi.TrippleDes;
 import koneksi.koneksi;
 
 /**
@@ -96,7 +97,6 @@ public class form_users extends javax.swing.JFrame {
         tf_npk = new javax.swing.JTextField();
         tf_position = new javax.swing.JTextField();
         tf_username = new javax.swing.JTextField();
-        tf_password = new javax.swing.JTextField();
         cb_role = new javax.swing.JComboBox<>();
         btn_save = new javax.swing.JButton();
         btn_update = new javax.swing.JButton();
@@ -106,6 +106,7 @@ public class form_users extends javax.swing.JFrame {
         btn_exit = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        tf_password = new javax.swing.JPasswordField();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -234,13 +235,12 @@ public class form_users extends javax.swing.JFrame {
                                 .addComponent(jLabel2)
                                 .addGap(103, 103, 103)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(tf_password)
-                                .addComponent(tf_username)
-                                .addComponent(tf_position)
-                                .addComponent(tf_name)
-                                .addComponent(cb_role, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(tf_npk, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tf_username, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tf_position, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tf_name, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cb_role, 0, 212, Short.MAX_VALUE)
+                            .addComponent(tf_npk, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                            .addComponent(tf_password))
                         .addGap(56, 56, 56)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btn_exit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -278,8 +278,8 @@ public class form_users extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(tf_password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_logout))
+                    .addComponent(btn_logout)
+                    .addComponent(tf_password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
@@ -357,6 +357,9 @@ public class form_users extends javax.swing.JFrame {
                 if (rs.first()) {
                     JOptionPane.showMessageDialog(null, "Maaf, NPK sudah digunakan");
                 } else {
+                    TrippleDes td = new TrippleDes();
+                    String encryptedPassword = td.encrypt(password);
+        
                     sql = "SELECT * FROM users where username='" + username + "'";
                     st = con.createStatement();
                     rs = st.executeQuery(sql);
@@ -364,9 +367,8 @@ public class form_users extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "Maaf, Username sudah digunakan");
                     } else {
                         sql = "INSERT INTO users (name, npk, position, password, role, username)"
-                                + "VALUE ('" + name + "','" + npk + "','" + position + "','" + password + "',"
+                                + "VALUE ('" + name + "','" + npk + "','" + position + "','" + encryptedPassword + "',"
                                 + "'" + role + "','" + username + "')";
-                        System.out.println("sql " + sql);
                         st = con.createStatement();
                         st.execute(sql);
                         Bersih();
@@ -376,6 +378,8 @@ public class form_users extends javax.swing.JFrame {
                 }
             } catch (HeadlessException | SQLException e) {
                 JOptionPane.showMessageDialog(null, "Data Gagal disimpan \n" + e.getMessage());
+            } catch (Exception ex) {
+                Logger.getLogger(form_users.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_btn_saveActionPerformed
@@ -391,10 +395,13 @@ public class form_users extends javax.swing.JFrame {
                 st = con.createStatement();
                 rs = st.executeQuery(sql);
                 if (rs.first()) {
+                    TrippleDes td = new TrippleDes();
+                    String decryptPassword = td.decrypt(rs.getString("password"));
                     tf_name.setText(rs.getString("name"));
                     tf_position.setText(rs.getString("position"));
                     tf_username.setText(rs.getString("username"));
-                    tf_password.setText(rs.getString("password"));
+                    tf_password.setText(decryptPassword);
+                    tf_password.disable();
                     cb_role.setSelectedItem(rs.getString("role"));
                     JOptionPane.showMessageDialog(null, "Data ditemukan");
                 } else {
@@ -404,6 +411,8 @@ public class form_users extends javax.swing.JFrame {
             } catch (SQLException | HeadlessException e) {
                 JOptionPane.showMessageDialog(null, "Data tidak ditemukan \n" + e.getMessage());
                 tf_npk.requestFocus();
+            } catch (Exception ex) {
+                Logger.getLogger(form_users.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_tf_npkKeyPressed
@@ -512,7 +521,7 @@ public class form_users extends javax.swing.JFrame {
     private javax.swing.JTable table;
     private javax.swing.JTextField tf_name;
     private javax.swing.JTextField tf_npk;
-    private javax.swing.JTextField tf_password;
+    private javax.swing.JPasswordField tf_password;
     private javax.swing.JTextField tf_position;
     private javax.swing.JTextField tf_username;
     // End of variables declaration//GEN-END:variables
