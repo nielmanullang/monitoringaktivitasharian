@@ -28,13 +28,12 @@ public class menu_utama extends javax.swing.JFrame {
 
     /**
      * @param user_id
-     * @throws SQLException
-     * Creates new form menu_utama
+     * @throws SQLException Creates new form menu_utama
      */
     public menu_utama(Integer user_id) throws SQLException {
         initComponents();
         setUserId(user_id);
-        sql = "SELECT * FROM users where id='" + user_id + "'";
+        sql = "select u.*, r.name as role FROM users u inner join roles r on u.role_id=r.id where u.id='" + user_id + "'";
         st = con.createStatement();
         rs = st.executeQuery(sql);
         if (rs.first()) {

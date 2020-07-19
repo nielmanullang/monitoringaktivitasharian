@@ -43,12 +43,11 @@ public class form_laporan extends javax.swing.JFrame {
     public form_laporan(Integer user_id) throws SQLException {
         initComponents();
         setUserId(user_id);
-        sql = "SELECT * FROM users where id='" + user_id + "'";
+        sql = "select u.*, s.name as role from users u INNER JOIN roles s on s.id=u.role_id where u.id='" + user_id + "'";
         st = con.createStatement();
         rs = st.executeQuery(sql);
         if (rs.first()) {
             setRole(rs.getString("role"));
-            System.out.println("role " + rs.getString("role"));
             TampilData();
         }
     }
@@ -70,6 +69,7 @@ public class form_laporan extends javax.swing.JFrame {
     }
 
     private void TampilData() {
+        System.out.println("role " + role);
         DefaultTableModel datalist = new DefaultTableModel();
         datalist.addColumn("NPK");
         datalist.addColumn("Name");
@@ -77,14 +77,15 @@ public class form_laporan extends javax.swing.JFrame {
         datalist.addColumn("End Time");
         datalist.addColumn("Tasklist");
         datalist.addColumn("Result");
-        if (role.equals("ADMIN")) {
-            sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
-                    + "FROM activities a INNER JOIN users u on u.id=a.user_id";
-        } else {
-            sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
-                    + "FROM activities a INNER JOIN users u on u.id=a.user_id WHERE a.id='" + user_id + "'";
-        }
         try {
+            if (role.equals("ADMIN")) {
+                sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
+                        + "FROM activities a INNER JOIN users u on u.id=a.user_id";
+            } else {
+                sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
+                        + "FROM activities a INNER JOIN users u on u.id=a.user_id WHERE a.user_id=" + user_id;
+            }
+            System.out.println("sql " + sql);
             st = con.createStatement();
             rs = st.executeQuery(sql);
             while (rs.next()) {
@@ -115,9 +116,16 @@ public class form_laporan extends javax.swing.JFrame {
         start_date = tf_start_date.getText();
         end_date = tf_end_date.getText();
         String whereClause = "";
+        if (role.equals("KARYAWAN")) {
+            if (whereClause.equals("")) {
+                whereClause += "a.user_id=" + user_id;
+            }
+        }
         if (!npk.equals("")) {
             if (whereClause.equals("")) {
                 whereClause += "npk='" + npk + "'";
+            } else {
+                whereClause += " AND npk = '" + npk + "'";
             }
         }
         if (!name.equals("")) {

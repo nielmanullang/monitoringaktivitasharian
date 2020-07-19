@@ -39,11 +39,12 @@ public class form_login extends javax.swing.JFrame {
             st = con.createStatement();
             rs = st.executeQuery(sql);
             if (!rs.first()) {
+                Integer role_id = 1;
                 TrippleDes td = new TrippleDes();
                 String encryptedPassword = td.encrypt("password");
-                sql = "INSERT INTO users (name, npk, position, password, role, username)"
+                sql = "INSERT INTO users (name, npk, position, password, role_id, username)"
                         + "VALUE ('Admin','0000','Administrator','" + encryptedPassword + "',"
-                        + "'ADMIN','admin')";
+                        + role_id + ",'admin')";
                 st = con.createStatement();
                 st.execute(sql);
             } else {

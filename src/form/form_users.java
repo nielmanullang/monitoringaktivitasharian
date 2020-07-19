@@ -32,8 +32,7 @@ public class form_users extends javax.swing.JFrame {
 
     /**
      * @param user_id
-     * @throws SQLException
-     * Creates new form form_users
+     * @throws SQLException Creates new form form_users
      */
     public form_users(Integer user_id) throws SQLException {
         initComponents();
@@ -60,12 +59,12 @@ public class form_users extends javax.swing.JFrame {
         try {
             int i = 1;
             st = con.createStatement();
-            rs = st.executeQuery("select * from users");
+            rs = st.executeQuery("select u.*, s.name as role from users u INNER JOIN roles s on s.id=u.role_id");
             while (rs.next()) {
                 datalist.addRow(new Object[]{
                     (i++),
-                    rs.getString("npk"), rs.getString("username"),
-                    rs.getString("name"), rs.getString("position"),
+                    rs.getString("npk"), rs.getString("name"),
+                    rs.getString("username"), rs.getString("position"),
                     rs.getString("role")
                 });
             }
@@ -359,16 +358,17 @@ public class form_users extends javax.swing.JFrame {
                 } else {
                     TrippleDes td = new TrippleDes();
                     String encryptedPassword = td.encrypt(password);
-        
+
                     sql = "SELECT * FROM users where username='" + username + "'";
                     st = con.createStatement();
                     rs = st.executeQuery(sql);
                     if (rs.first()) {
                         JOptionPane.showMessageDialog(null, "Maaf, Username sudah digunakan");
                     } else {
-                        sql = "INSERT INTO users (name, npk, position, password, role, username)"
+                        Integer role_id = role == "ADMIN" ? 1 : 2;
+                        sql = "INSERT INTO users (name, npk, position, password, role_id, username)"
                                 + "VALUE ('" + name + "','" + npk + "','" + position + "','" + encryptedPassword + "',"
-                                + "'" + role + "','" + username + "')";
+                                + "'" + role_id + "','" + username + "')";
                         st = con.createStatement();
                         st.execute(sql);
                         Bersih();
@@ -390,10 +390,11 @@ public class form_users extends javax.swing.JFrame {
         int tekanenter = evt.getKeyCode();
         if (tekanenter == 10) {
             try {
-                sql = "SELECT * FROM users "
-                        + "where npk='" + npk + "'";
+                sql = "select u.*, r.name as role FROM users u inner join roles r on u.role_id=r.id "
+                        + "where u.npk='" + npk + "'";
                 st = con.createStatement();
                 rs = st.executeQuery(sql);
+                System.out.println("sql " + sql);
                 if (rs.first()) {
                     TrippleDes td = new TrippleDes();
                     String decryptPassword = td.decrypt(rs.getString("password"));
@@ -405,6 +406,7 @@ public class form_users extends javax.swing.JFrame {
                     cb_role.setSelectedItem(rs.getString("role"));
                     JOptionPane.showMessageDialog(null, "Data ditemukan");
                 } else {
+                    tf_password.enable();
                     JOptionPane.showMessageDialog(null, "Data tidak ditemukan");
                     tf_npk.requestFocus();
                 }
@@ -429,14 +431,27 @@ public class form_users extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Maaf, Role belum dipilih");
         } else {
             try {
-                sql = "UPDATE users SET name='" + name + "', position='" + position + "', username='" + username + "', password='" + password + "', role='" + role + "' where npk = '" + npk + "'";
+                sql = "SELECT * FROM users where username='" + username + "' and npk!='" + npk + "'";
+                System.out.println("sql "+sql);
                 st = con.createStatement();
-                st.execute(sql);
-                Bersih();
-                TampilData();
-                JOptionPane.showMessageDialog(null, "Data Berhasil diupdate");
+                rs = st.executeQuery(sql);
+                if (rs.first()) {
+                    JOptionPane.showMessageDialog(null, "Maaf, Username sudah digunakan");
+                } else {
+                    TrippleDes td = new TrippleDes();
+                    String encryptedPassword = td.encrypt(password);
+                    Integer role_id = role == "ADMIN" ? 1 : 2;
+                    sql = "UPDATE users SET name='" + name + "', position='" + position + "', username='" + username + "' , password='" + encryptedPassword + "', role_id='" + role_id + "' where npk = '" + npk + "'";
+                    st = con.createStatement();
+                    st.execute(sql);
+                    Bersih();
+                    TampilData();
+                    JOptionPane.showMessageDialog(null, "Data Berhasil diupdate");
+                }
             } catch (SQLException | HeadlessException e) {
                 JOptionPane.showMessageDialog(null, "Data Gagal diupdate \n" + e.getMessage());
+            } catch (Exception ex) {
+                Logger.getLogger(form_users.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_btn_updateActionPerformed
@@ -448,6 +463,7 @@ public class form_users extends javax.swing.JFrame {
             sql = "DELETE FROM users where npk='" + npk + "'";
             st = con.createStatement();
             st.execute(sql);
+            tf_password.enable();
             Bersih();
             TampilData();
             JOptionPane.showMessageDialog(null, "Data Berhasil dihapus");
