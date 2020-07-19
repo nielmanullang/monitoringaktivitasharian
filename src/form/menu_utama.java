@@ -37,7 +37,7 @@ public class menu_utama extends javax.swing.JFrame {
         rs = st.executeQuery(sql);
         if (rs.first()) {
             text_name.setText(rs.getString("name"));
-            System.out.println("role "+rs.getString("role"));
+            System.out.println("role " + rs.getString("role"));
             if (rs.getString("role").equals("ADMIN")) {
                 btn_form_users.setVisible(true);
                 btn_form_masuk.setVisible(false);
@@ -212,9 +212,13 @@ public class menu_utama extends javax.swing.JFrame {
 
     private void btn_form_laporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_form_laporanActionPerformed
         // TODO add your handling code here:
-        form_laporan l = new form_laporan();
-        l.setVisible(true);
-        dispose();
+        try {
+            form_laporan l = new form_laporan(user_id);
+            l.setVisible(true);
+            dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(menu_utama.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_form_laporanActionPerformed
 
     private void btn_form_usersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_form_usersActionPerformed

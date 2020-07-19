@@ -166,28 +166,34 @@ public class form_login extends javax.swing.JFrame {
         String username = tf_username.getText();
         String password = tf_password.getText();
 
-        try {
-            sql = "SELECT * FROM users "
-                    + "where username='" + username + "'";
-            st = con.createStatement();
-            rs = st.executeQuery(sql);
-            if (rs.first()) {
+        if (username.equals("")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Username");
+        } else if (password.equals("")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Password");
+        } else {
+            try {
                 sql = "SELECT * FROM users "
-                        + "where username='" + username + "' and password='" + password + "'";
+                        + "where username='" + username + "'";
                 st = con.createStatement();
                 rs = st.executeQuery(sql);
                 if (rs.first()) {
-                    menu_utama r = new menu_utama(rs.getInt("id"));
-                    r.setVisible(true);
-                    dispose();
+                    sql = "SELECT * FROM users "
+                            + "where username='" + username + "' and password='" + password + "'";
+                    st = con.createStatement();
+                    rs = st.executeQuery(sql);
+                    if (rs.first()) {
+                        menu_utama r = new menu_utama(rs.getInt("id"));
+                        r.setVisible(true);
+                        dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Username atau Password Salah");
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Username atau Password Salah");
+                    JOptionPane.showMessageDialog(null, "Username tidak ditemukan");
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "Username tidak ditemukan");
+            } catch (SQLException | HeadlessException e) {
+                JOptionPane.showMessageDialog(null, "Username atau Password Salah \n" + e.getMessage());
             }
-        } catch (SQLException | HeadlessException e) {
-            JOptionPane.showMessageDialog(null, "Username atau Password Salah \n" + e.getMessage());
         }
     }//GEN-LAST:event_btn_loginActionPerformed
 
@@ -203,40 +209,40 @@ public class form_login extends javax.swing.JFrame {
         tf_username.requestFocus();
     }//GEN-LAST:event_btn_resetActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(form_login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(form_login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(form_login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(form_login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new form_login().setVisible(true);
-            }
-        });
-    }
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(form_login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(form_login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(form_login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(form_login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new form_login().setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_exit;

@@ -5,6 +5,7 @@
  */
 package form;
 
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ public class form_users extends javax.swing.JFrame {
     private ResultSet rs;
     private String sql = "";
     public static Integer user_id;
+    private String name, npk, position, username, password, role;
 
     /**
      * Creates new form form_users
@@ -34,23 +36,16 @@ public class form_users extends javax.swing.JFrame {
         initComponents();
         TampilData();
         setUserId(user_id);
-        System.out.println("user_id " + user_id);
-        sql = "SELECT * FROM users where id='" + user_id + "'";
-        st = con.createStatement();
-        rs = st.executeQuery(sql);
-        if (rs.first()) {
-            System.out.println("form_users " + rs.first());
-        }
     }
 
     public static void setUserId(Integer user_id) {
-        form_masuk.user_id = user_id;
+        form_users.user_id = user_id;
     }
 
     public static Integer getUserId() {
         return user_id;
     }
-    
+
     private void TampilData() {
         DefaultTableModel datalist = new DefaultTableModel();
         datalist.addColumn("No");
@@ -66,8 +61,8 @@ public class form_users extends javax.swing.JFrame {
             while (rs.next()) {
                 datalist.addRow(new Object[]{
                     (i++),
-                    rs.getString("npk"), rs.getString("name"),
-                    rs.getString("position"), rs.getString("username"),
+                    rs.getString("npk"), rs.getString("username"),
+                    rs.getString("name"), rs.getString("position"),
                     rs.getString("role")
                 });
             }
@@ -106,7 +101,7 @@ public class form_users extends javax.swing.JFrame {
         btn_delete = new javax.swing.JButton();
         btn_cancel = new javax.swing.JButton();
         btn_logout = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        btn_exit = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
 
@@ -137,15 +132,11 @@ public class form_users extends javax.swing.JFrame {
 
         jLabel6.setText("Role");
 
-        tf_name.setText("Name");
-
-        tf_npk.setText("NPK");
-
-        tf_position.setText("Position");
-
-        tf_username.setText("Username");
-
-        tf_password.setText("Password");
+        tf_npk.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_npkKeyPressed(evt);
+            }
+        });
 
         cb_role.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cb_role.addActionListener(new java.awt.event.ActionListener() {
@@ -155,10 +146,25 @@ public class form_users extends javax.swing.JFrame {
         });
 
         btn_save.setText("Save");
+        btn_save.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_saveActionPerformed(evt);
+            }
+        });
 
         btn_update.setText("Update");
+        btn_update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_updateActionPerformed(evt);
+            }
+        });
 
         btn_delete.setText("Delete");
+        btn_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_deleteActionPerformed(evt);
+            }
+        });
 
         btn_cancel.setText("Cancel");
         btn_cancel.addActionListener(new java.awt.event.ActionListener() {
@@ -174,10 +180,10 @@ public class form_users extends javax.swing.JFrame {
             }
         });
 
-        jButton6.setText("Exit");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btn_exit.setText("Exit");
+        btn_exit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btn_exitActionPerformed(evt);
             }
         });
 
@@ -189,7 +195,7 @@ public class form_users extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Name", "NPK", "Position", "Username", "Role"
+                "NPK", "Username", "Name", "Position", "Role"
             }
         ));
         jScrollPane2.setViewportView(table);
@@ -204,28 +210,33 @@ public class form_users extends javax.swing.JFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 670, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addGap(82, 82, 82)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(tf_password, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                            .addComponent(tf_username, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                            .addComponent(tf_position, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                            .addComponent(tf_npk, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                            .addComponent(tf_name)
-                            .addComponent(cb_role, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6))
+                                .addGap(66, 66, 66))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(103, 103, 103)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(tf_password)
+                                .addComponent(tf_username)
+                                .addComponent(tf_position)
+                                .addComponent(tf_name)
+                                .addComponent(cb_role, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tf_npk, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(56, 56, 56)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_logout, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                            .addComponent(btn_exit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btn_logout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btn_update, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_save, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(43, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -233,14 +244,14 @@ public class form_users extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(tf_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_save))
+                    .addComponent(btn_save)
+                    .addComponent(tf_npk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(tf_npk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_update))
+                    .addComponent(btn_update)
+                    .addComponent(jLabel1)
+                    .addComponent(tf_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btn_delete)
@@ -261,7 +272,7 @@ public class form_users extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(cb_role, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton6))
+                    .addComponent(btn_exit))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(21, Short.MAX_VALUE))
@@ -270,10 +281,10 @@ public class form_users extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void btn_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_exitActionPerformed
         // TODO add your handling code here:
         System.exit(0);
-    }//GEN-LAST:event_jButton6ActionPerformed
+    }//GEN-LAST:event_btn_exitActionPerformed
 
     private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
         // TODO add your handling code here:
@@ -296,6 +307,129 @@ public class form_users extends javax.swing.JFrame {
     private void cb_roleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_roleActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cb_roleActionPerformed
+
+    private void Bersih() {
+        tf_name.setText("");
+        tf_npk.setText("");
+        tf_position.setText("");
+        tf_username.setText("");
+        tf_password.setText("");
+        cb_role.setSelectedItem("PILIH");
+    }
+
+    private void btn_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_saveActionPerformed
+        // TODO add your handling code here:
+        name = String.valueOf(tf_name.getText());
+        npk = String.valueOf(tf_npk.getText());
+        position = String.valueOf(tf_position.getText());
+        username = String.valueOf(tf_username.getText());
+        password = String.valueOf(tf_password.getText());
+        role = String.valueOf(cb_role.getSelectedItem());
+        if (npk.equals("")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field NPK");
+        } else if (name.equals("")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Name");
+        } else if (position.equals("")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Position");
+        } else if (username.equals("")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Username");
+        } else if (password.equals("")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Password");
+        } else if (cb_role.getSelectedItem().equals("PILIH")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Role belum dipilih");
+        } else {
+            try {
+                sql = "SELECT * FROM users where npk='" + npk + "'";
+                st = con.createStatement();
+                rs = st.executeQuery(sql);
+                if (rs.first()) {
+                    JOptionPane.showMessageDialog(null, "Maaf, NPK sudah digunakan");
+                } else {
+                    sql = "SELECT * FROM users where username='" + username + "'";
+                    st = con.createStatement();
+                    rs = st.executeQuery(sql);
+                    if (rs.first()) {
+                        JOptionPane.showMessageDialog(null, "Maaf, Username sudah digunakan");
+                    } else {
+                        sql = "INSERT INTO users (name, npk, position, password, role, username)"
+                                + "VALUE ('" + name + "','" + npk + "','" + position + "','" + password + "',"
+                                + "'" + role + "','" + username + "')";
+                        System.out.println("sql " + sql);
+                        st = con.createStatement();
+                        st.execute(sql);
+                        Bersih();
+                        TampilData();
+                        JOptionPane.showMessageDialog(null, "Data Berhasil disimpan");
+                    }
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Data Gagal disimpan \n" + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_btn_saveActionPerformed
+
+    private void tf_npkKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_npkKeyPressed
+        // TODO add your handling code here:
+        npk = tf_npk.getText();
+        int tekanenter = evt.getKeyCode();
+        if (tekanenter == 10) {
+            try {
+                sql = "SELECT * FROM users "
+                        + "where npk='" + npk + "'";
+                st = con.createStatement();
+                rs = st.executeQuery(sql);
+                if (rs.first()) {
+                    tf_name.setText(rs.getString("name"));
+                    tf_position.setText(rs.getString("position"));
+                    tf_username.setText(rs.getString("username"));
+                    tf_password.setText(rs.getString("password"));
+                    cb_role.setSelectedItem(rs.getString("role"));
+                    JOptionPane.showMessageDialog(null, "Data ditemukan");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Data tidak ditemukan");
+                    tf_npk.requestFocus();
+                }
+            } catch (SQLException | HeadlessException e) {
+                JOptionPane.showMessageDialog(null, "Data tidak ditemukan \n" + e.getMessage());
+                tf_npk.requestFocus();
+            }
+        }
+    }//GEN-LAST:event_tf_npkKeyPressed
+
+    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
+        // TODO add your handling code here:
+        name = String.valueOf(tf_name.getText());
+        npk = String.valueOf(tf_npk.getText());
+        position = String.valueOf(tf_position.getText());
+        username = String.valueOf(tf_username.getText());
+        password = String.valueOf(tf_password.getText());
+        role = String.valueOf(cb_role.getSelectedItem());
+        try {
+            sql = "UPDATE users SET name='" + name + "', position='" + position + "', username='" + username + "', password='" + password + "', role='" + role + "' where npk = '" + npk + "'";
+            st = con.createStatement();
+            st.execute(sql);
+            Bersih();
+            TampilData();
+            JOptionPane.showMessageDialog(null, "Data Berhasil diupdate");
+        } catch (SQLException | HeadlessException e) {
+            JOptionPane.showMessageDialog(null, "Data Gagal diupdate \n" + e.getMessage());
+        }
+    }//GEN-LAST:event_btn_updateActionPerformed
+
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        // TODO add your handling code here:
+        npk = String.valueOf(tf_npk.getText());
+        try {
+            sql = "DELETE FROM users where npk='" + npk + "'";
+            st = con.createStatement();
+            st.execute(sql);
+            Bersih();
+            TampilData();
+            JOptionPane.showMessageDialog(null, "Data Berhasil dihapus");
+        } catch (SQLException | HeadlessException e) {
+            JOptionPane.showMessageDialog(null, "Data Gagal dihapus \n" + e.getMessage());
+        }
+    }//GEN-LAST:event_btn_deleteActionPerformed
 
 //    /**
 //     * @param args the command line arguments
@@ -335,11 +469,11 @@ public class form_users extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_cancel;
     private javax.swing.JButton btn_delete;
+    private javax.swing.JButton btn_exit;
     private javax.swing.JButton btn_logout;
     private javax.swing.JButton btn_save;
     private javax.swing.JButton btn_update;
     private javax.swing.JComboBox<String> cb_role;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
