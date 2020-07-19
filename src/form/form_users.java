@@ -30,6 +30,8 @@ public class form_users extends javax.swing.JFrame {
     private String name, npk, position, username, password, role;
 
     /**
+     * @param user_id
+     * @throws SQLException
      * Creates new form form_users
      */
     public form_users(Integer user_id) throws SQLException {
@@ -51,8 +53,8 @@ public class form_users extends javax.swing.JFrame {
         datalist.addColumn("No");
         datalist.addColumn("NPK");
         datalist.addColumn("Name");
-        datalist.addColumn("Position");
         datalist.addColumn("Username");
+        datalist.addColumn("Position");
         datalist.addColumn("Role");
         try {
             int i = 1;
@@ -67,7 +69,7 @@ public class form_users extends javax.swing.JFrame {
                 });
             }
             table.setModel(datalist);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null,
                     "Gagal Tampil \n" + e.getMessage());
         }
@@ -372,7 +374,7 @@ public class form_users extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "Data Berhasil disimpan");
                     }
                 }
-            } catch (Exception e) {
+            } catch (HeadlessException | SQLException e) {
                 JOptionPane.showMessageDialog(null, "Data Gagal disimpan \n" + e.getMessage());
             }
         }

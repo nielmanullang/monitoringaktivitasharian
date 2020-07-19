@@ -27,6 +27,8 @@ public class menu_utama extends javax.swing.JFrame {
     public static Integer user_id;
 
     /**
+     * @param user_id
+     * @throws SQLException
      * Creates new form menu_utama
      */
     public menu_utama(Integer user_id) throws SQLException {
@@ -203,9 +205,7 @@ public class menu_utama extends javax.swing.JFrame {
             form_keluar k = new form_keluar(user_id);
             k.setVisible(true);
             dispose();
-        } catch (SQLException ex) {
-            Logger.getLogger(menu_utama.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
+        } catch (SQLException | ParseException ex) {
             Logger.getLogger(menu_utama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btn_form_keluarActionPerformed

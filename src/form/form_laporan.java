@@ -7,14 +7,19 @@ package form;
 
 import com.mysql.jdbc.StringUtils;
 import java.awt.HeadlessException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import koneksi.koneksi;
 
 /**
@@ -29,7 +34,7 @@ public class form_laporan extends javax.swing.JFrame {
     private String sql = "";
     public static Integer user_id;
     public static String role;
-    private String name, npk, start_date, end_date;
+    private String name, npk, start_date, end_date, ext, path, filename;
 
     /**
      * @param user_id
@@ -375,8 +380,31 @@ public class form_laporan extends javax.swing.JFrame {
 
     private void btn_exportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_exportActionPerformed
         // TODO add your handling code here:
-        name = String.valueOf(tf_name.getText());
-        npk = String.valueOf(tf_npk.getText());
+        FileWriter fileWriter;
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("[B]export_output/excel[/B]"));
+        int retrival = chooser.showSaveDialog(null);
+        if (retrival == JFileChooser.APPROVE_OPTION) {
+            try {
+                TableModel tModel = table.getModel();
+                fileWriter = new FileWriter(new File(chooser.getSelectedFile() + ".csv"));
+                // write header
+                for (int i = 0; i < tModel.getColumnCount(); i++) {
+                    fileWriter.write(tModel.getColumnName(i).toUpperCase() + ",");
+                }
+                fileWriter.write("\n");
+                // write record
+                for (int i = 0; i < tModel.getRowCount(); i++) {
+                    for (int j = 0; j < tModel.getColumnCount(); j++) {
+                        fileWriter.write(tModel.getValueAt(i, j).toString() + ",");
+                    }
+                    fileWriter.write("\n");
+                }
+                fileWriter.close();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
     }//GEN-LAST:event_btn_exportActionPerformed
 
     private void tf_start_dateKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_start_dateKeyPressed

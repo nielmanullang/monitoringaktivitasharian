@@ -31,6 +31,8 @@ public class form_masuk extends javax.swing.JFrame {
     private String tasklist, start_time, start_time_hidden;
 
     /**
+     * @param user_id
+     * @throws SQLException
      * Creates new form form_masuk
      */
     public form_masuk(Integer user_id) throws SQLException {
