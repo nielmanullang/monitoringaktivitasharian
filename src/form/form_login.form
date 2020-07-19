@@ -101,6 +101,7 @@
     <Component class="javax.swing.JTextField" name="tf_password">
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tf_passwordActionPerformed"/>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tf_passwordKeyPressed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btn_login">

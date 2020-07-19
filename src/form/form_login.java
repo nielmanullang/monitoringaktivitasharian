@@ -40,6 +40,41 @@ public class form_login extends javax.swing.JFrame {
         return user_id;
     }
 
+    public void actionLogin() {
+        String username = tf_username.getText();
+        String password = tf_password.getText();
+
+        if (username.equals("")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Username");
+        } else if (password.equals("")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Password");
+        } else {
+            try {
+                sql = "SELECT * FROM users "
+                        + "where username='" + username + "'";
+                st = con.createStatement();
+                rs = st.executeQuery(sql);
+                if (rs.first()) {
+                    sql = "SELECT * FROM users "
+                            + "where username='" + username + "' and password='" + password + "'";
+                    st = con.createStatement();
+                    rs = st.executeQuery(sql);
+                    if (rs.first()) {
+                        menu_utama r = new menu_utama(rs.getInt("id"));
+                        r.setVisible(true);
+                        dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Username atau Password Salah");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Username tidak ditemukan");
+                }
+            } catch (SQLException | HeadlessException e) {
+                JOptionPane.showMessageDialog(null, "Username atau Password Salah \n" + e.getMessage());
+            }
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -59,7 +94,6 @@ public class form_login extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(700, 450));
 
         jLabel1.setFont(new java.awt.Font("Comic Sans MS", 1, 14)); // NOI18N
         jLabel1.setText("Username");
@@ -76,6 +110,11 @@ public class form_login extends javax.swing.JFrame {
         tf_password.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tf_passwordActionPerformed(evt);
+            }
+        });
+        tf_password.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_passwordKeyPressed(evt);
             }
         });
 
@@ -163,38 +202,7 @@ public class form_login extends javax.swing.JFrame {
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
         // TODO add your handling code here:
-        String username = tf_username.getText();
-        String password = tf_password.getText();
-
-        if (username.equals("")) {
-            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Username");
-        } else if (password.equals("")) {
-            JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Password");
-        } else {
-            try {
-                sql = "SELECT * FROM users "
-                        + "where username='" + username + "'";
-                st = con.createStatement();
-                rs = st.executeQuery(sql);
-                if (rs.first()) {
-                    sql = "SELECT * FROM users "
-                            + "where username='" + username + "' and password='" + password + "'";
-                    st = con.createStatement();
-                    rs = st.executeQuery(sql);
-                    if (rs.first()) {
-                        menu_utama r = new menu_utama(rs.getInt("id"));
-                        r.setVisible(true);
-                        dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Username atau Password Salah");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Username tidak ditemukan");
-                }
-            } catch (SQLException | HeadlessException e) {
-                JOptionPane.showMessageDialog(null, "Username atau Password Salah \n" + e.getMessage());
-            }
-        }
+        actionLogin();
     }//GEN-LAST:event_btn_loginActionPerformed
 
     private void btn_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_exitActionPerformed
@@ -208,6 +216,14 @@ public class form_login extends javax.swing.JFrame {
         tf_password.setText("");
         tf_username.requestFocus();
     }//GEN-LAST:event_btn_resetActionPerformed
+
+    private void tf_passwordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_passwordKeyPressed
+        // TODO add your handling code here:
+        int tekanenter = evt.getKeyCode();
+        if (tekanenter == 10) {
+            actionLogin();
+        }
+    }//GEN-LAST:event_tf_passwordKeyPressed
 
 //    /**
 //     * @param args the command line arguments

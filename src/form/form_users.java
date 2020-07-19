@@ -138,7 +138,7 @@ public class form_users extends javax.swing.JFrame {
             }
         });
 
-        cb_role.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cb_role.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PILIH", "ADMIN", "KARYAWAN" }));
         cb_role.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cb_roleActionPerformed(evt);
@@ -198,6 +198,16 @@ public class form_users extends javax.swing.JFrame {
                 "NPK", "Username", "Name", "Position", "Role"
             }
         ));
+        table.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                tableMouseWheelMoved(evt);
+            }
+        });
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(table);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -404,15 +414,19 @@ public class form_users extends javax.swing.JFrame {
         username = String.valueOf(tf_username.getText());
         password = String.valueOf(tf_password.getText());
         role = String.valueOf(cb_role.getSelectedItem());
-        try {
-            sql = "UPDATE users SET name='" + name + "', position='" + position + "', username='" + username + "', password='" + password + "', role='" + role + "' where npk = '" + npk + "'";
-            st = con.createStatement();
-            st.execute(sql);
-            Bersih();
-            TampilData();
-            JOptionPane.showMessageDialog(null, "Data Berhasil diupdate");
-        } catch (SQLException | HeadlessException e) {
-            JOptionPane.showMessageDialog(null, "Data Gagal diupdate \n" + e.getMessage());
+        if (cb_role.getSelectedItem().equals("PILIH")) {
+            JOptionPane.showMessageDialog(null, "Maaf, Role belum dipilih");
+        } else {
+            try {
+                sql = "UPDATE users SET name='" + name + "', position='" + position + "', username='" + username + "', password='" + password + "', role='" + role + "' where npk = '" + npk + "'";
+                st = con.createStatement();
+                st.execute(sql);
+                Bersih();
+                TampilData();
+                JOptionPane.showMessageDialog(null, "Data Berhasil diupdate");
+            } catch (SQLException | HeadlessException e) {
+                JOptionPane.showMessageDialog(null, "Data Gagal diupdate \n" + e.getMessage());
+            }
         }
     }//GEN-LAST:event_btn_updateActionPerformed
 
@@ -430,6 +444,16 @@ public class form_users extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Data Gagal dihapus \n" + e.getMessage());
         }
     }//GEN-LAST:event_btn_deleteActionPerformed
+
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
+        // TODO add your handling code here:
+        System.out.println("row " + table.rowAtPoint(evt.getPoint()));
+    }//GEN-LAST:event_tableMouseClicked
+
+    private void tableMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_tableMouseWheelMoved
+        // TODO add your handling code here:
+        System.out.println("row " + table.rowAtPoint(evt.getPoint()));
+    }//GEN-LAST:event_tableMouseWheelMoved
 
 //    /**
 //     * @param args the command line arguments
