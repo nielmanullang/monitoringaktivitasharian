@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -116,8 +118,8 @@ public class form_laporan extends javax.swing.JFrame {
 
         npk = tf_npk.getText();
         name = tf_name.getText();
-        start_date = tf_start_date.getText();
-        end_date = tf_end_date.getText();
+        start_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_start_date.getDate()));
+        end_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_end_date.getDate()));
         String whereClause = "";
         if (role.equals("KARYAWAN")) {
             if (whereClause.equals("")) {
@@ -126,30 +128,30 @@ public class form_laporan extends javax.swing.JFrame {
         }
         if (!npk.equals("")) {
             if (whereClause.equals("")) {
-                whereClause += "npk='" + npk + "'";
+                whereClause += "u.npk='" + npk + "'";
             } else {
-                whereClause += " AND npk = '" + npk + "'";
+                whereClause += " AND u.npk = '" + npk + "'";
             }
         }
         if (!name.equals("")) {
             if (whereClause.equals("")) {
-                whereClause += "name like '%" + name + "%'";
+                whereClause += "u.name like '%" + name + "%'";
             } else {
-                whereClause += " AND name like '%" + name + "%'";
+                whereClause += " AND u.name like '%" + name + "%'";
             }
         }
         if (!start_date.equals("")) {
             if (whereClause.equals("")) {
-                whereClause += "start_date = '" + start_date + "'";
+                whereClause += "a.start_time >= '" + start_date + "'";
             } else {
-                whereClause += "AND start_date = '" + start_date + "'";
+                whereClause += "AND a.start_time >= '" + start_date + "'";
             }
         }
         if (!end_date.equals("")) {
             if (whereClause.equals("")) {
-                whereClause += "end_time = '" + end_date + "'";
+                whereClause += "a.end_time <= '" + end_date + "'";
             } else {
-                whereClause += " AND end_time = '" + end_date + "'";
+                whereClause += " AND a.end_time <= '" + end_date + "'";
             }
         }
         try {
@@ -199,9 +201,9 @@ public class form_laporan extends javax.swing.JFrame {
         btn_exit = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        tf_start_date = new javax.swing.JTextField();
-        tf_end_date = new javax.swing.JTextField();
         btn_export_pdf = new javax.swing.JButton();
+        tf_start_date = new com.toedter.calendar.JDateChooser();
+        tf_end_date = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -273,12 +275,6 @@ public class form_laporan extends javax.swing.JFrame {
 
         jLabel4.setText("End Date");
 
-        tf_start_date.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                tf_start_dateKeyPressed(evt);
-            }
-        });
-
         btn_export_pdf.setText("Export to PDF");
         btn_export_pdf.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -311,7 +307,7 @@ public class form_laporan extends javax.swing.JFrame {
                                     .addComponent(jLabel3)
                                     .addComponent(jLabel4))
                                 .addGap(66, 66, 66)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(tf_start_date, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(tf_end_date, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(38, 38, 38)
@@ -342,15 +338,16 @@ public class form_laporan extends javax.swing.JFrame {
                             .addComponent(btn_cancel)
                             .addComponent(btn_export_pdf))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(tf_start_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_logout))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel3)
+                                .addComponent(btn_logout))
+                            .addComponent(tf_start_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(4, 4, 4)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(tf_end_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_exit)))
+                            .addComponent(btn_exit)
+                            .addComponent(tf_end_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btn_search)
                         .addComponent(btn_export_excel)))
@@ -403,8 +400,8 @@ public class form_laporan extends javax.swing.JFrame {
         // TODO add your handling code here:
         npk = tf_npk.getText();
         name = tf_name.getText();
-        start_date = tf_start_date.getText();
-        end_date = tf_end_date.getText();
+        start_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_start_date.getDate()));
+        end_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_end_date.getDate()));
         String whereClause = "";
         if (role.equals("KARYAWAN")) {
             if (whereClause.equals("")) {
@@ -427,16 +424,16 @@ public class form_laporan extends javax.swing.JFrame {
         }
         if (!start_date.equals("")) {
             if (whereClause.equals("")) {
-                whereClause += "start_date = '" + start_date + "'";
+                whereClause += "start_time >= '" + start_date + "'";
             } else {
-                whereClause += "AND start_date = '" + start_date + "'";
+                whereClause += "AND start_time >= '" + start_date + "'";
             }
         }
         if (!end_date.equals("")) {
             if (whereClause.equals("")) {
-                whereClause += "end_time = '" + end_date + "'";
+                whereClause += "end_time <= '" + end_date + "'";
             } else {
-                whereClause += " AND end_time = '" + end_date + "'";
+                whereClause += " AND end_time <= '" + end_date + "'";
             }
         }
         if (!whereClause.equals("")) {
@@ -505,10 +502,6 @@ public class form_laporan extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_export_pdfActionPerformed
 
-    private void tf_start_dateKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_start_dateKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tf_start_dateKeyPressed
-
 //    /**
 //     * @param args the command line arguments
 //     */
@@ -558,9 +551,9 @@ public class form_laporan extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable table;
-    private javax.swing.JTextField tf_end_date;
+    private com.toedter.calendar.JDateChooser tf_end_date;
     private javax.swing.JTextField tf_name;
     private javax.swing.JTextField tf_npk;
-    private javax.swing.JTextField tf_start_date;
+    private com.toedter.calendar.JDateChooser tf_start_date;
     // End of variables declaration//GEN-END:variables
 }

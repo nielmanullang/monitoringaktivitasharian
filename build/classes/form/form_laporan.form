@@ -48,8 +48,8 @@
                                   <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="1" attributes="0">
+                              <EmptySpace min="66" pref="66" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="tf_start_date" min="-2" pref="212" max="-2" attributes="0"/>
                                   <Component id="tf_end_date" min="-2" pref="212" max="-2" attributes="0"/>
                               </Group>
@@ -91,16 +91,18 @@
                           <Component id="btn_export_pdf" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tf_start_date" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btn_logout" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btn_logout" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="tf_start_date" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tf_end_date" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_exit" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tf_end_date" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -246,13 +248,6 @@
         <Property name="text" type="java.lang.String" value="End Date"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="tf_start_date">
-      <Events>
-        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tf_start_dateKeyPressed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JTextField" name="tf_end_date">
-    </Component>
     <Component class="javax.swing.JButton" name="btn_export_pdf">
       <Properties>
         <Property name="text" type="java.lang.String" value="Export to PDF"/>
@@ -260,6 +255,10 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_export_pdfActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="com.toedter.calendar.JDateChooser" name="tf_start_date">
+    </Component>
+    <Component class="com.toedter.calendar.JDateChooser" name="tf_end_date">
     </Component>
   </SubComponents>
 </Form>
