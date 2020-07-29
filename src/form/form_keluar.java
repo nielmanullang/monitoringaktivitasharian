@@ -5,6 +5,7 @@
  */
 package form;
 
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,6 +33,9 @@ public class form_keluar extends javax.swing.JFrame {
     private String result, end_time, end_time_hidden;
 
     /**
+     * @param user_id
+     * @throws SQLException
+     * @throws ParseException
      * Creates new form form_keluar
      */
     public form_keluar(Integer user_id) throws SQLException, ParseException {
@@ -54,7 +58,6 @@ public class form_keluar extends javax.swing.JFrame {
             if (rs.first()) {
                 Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH).parse(rs.getString("start_time"));
                 System.out.println("start_time1 " + date);
-//                System.out.println("start_time2 " + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss",Locale.ENGLISH).parse(rs.getString("start_time")));
                 tf_start_time.setText(new SimpleDateFormat("dd MMM yyyy hh:mm ").format(date) + "WIB");
                 tf_start_time.setEditable(false);
                 tf_tasklist.setText(rs.getString("tasklist"));
@@ -228,8 +231,6 @@ public class form_keluar extends javax.swing.JFrame {
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
         try {
             // TODO add your handling code here:
-            System.out.println("form_keluar_1 " + user_id);
-            System.out.println("form_keluar_2 " + getUserId());
             menu_utama m = new menu_utama(user_id);
             m.setVisible(true);
             dispose();
@@ -250,7 +251,7 @@ public class form_keluar extends javax.swing.JFrame {
             menu_utama m = new menu_utama(user_id);
             m.setVisible(true);
             dispose();
-        } catch (Exception e) {
+        } catch (HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(null, "Data Gagal disimpan \n" + e.getMessage());
         }
     }//GEN-LAST:event_btn_submitActionPerformed

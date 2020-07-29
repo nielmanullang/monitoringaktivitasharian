@@ -55,13 +55,17 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="btn_exit" alignment="0" max="32767" attributes="0"/>
                           <Component id="btn_logout" alignment="0" max="32767" attributes="0"/>
                           <Component id="btn_cancel" alignment="0" max="32767" attributes="0"/>
-                          <Component id="btn_export" alignment="0" max="32767" attributes="0"/>
                           <Component id="btn_search" alignment="0" min="-2" pref="102" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="btn_export_excel" max="32767" attributes="0"/>
+                          <Component id="btn_export_pdf" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -73,40 +77,39 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btn_search" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="tf_npk" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btn_export" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="tf_name" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="btn_cancel" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="tf_npk" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tf_name" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_cancel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_export_pdf" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btn_logout" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="tf_start_date" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_logout" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="tf_end_date" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_exit" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="btn_search" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_export_excel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="btn_exit" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jScrollPane2" pref="243" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+              <Component id="jScrollPane2" pref="246" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -201,12 +204,12 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_searchActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_export">
+    <Component class="javax.swing.JButton" name="btn_export_excel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Export"/>
+        <Property name="text" type="java.lang.String" value="Export to Excel"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_exportActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_export_excelActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btn_cancel">
@@ -249,6 +252,14 @@
       </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="tf_end_date">
+    </Component>
+    <Component class="javax.swing.JButton" name="btn_export_pdf">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Export to PDF"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_export_pdfActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

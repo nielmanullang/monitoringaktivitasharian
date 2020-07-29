@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 /**
  *
- * @author vinzzah
+ * @author danielmanullang
  */
 public class koneksi {
     private Connection con;

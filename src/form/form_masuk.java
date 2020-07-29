@@ -25,7 +25,7 @@ public class form_masuk extends javax.swing.JFrame {
 
     private final Connection con = new koneksi().connect();
     private Statement st;
-    private ResultSet rs;
+    private final ResultSet rs;
     private String sql = "";
     public static Integer user_id;
     private String tasklist, start_time, start_time_hidden;

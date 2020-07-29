@@ -39,7 +39,7 @@ public class menu_utama extends javax.swing.JFrame {
         if (rs.first()) {
             text_name.setText(rs.getString("name"));
             System.out.println("role " + rs.getString("role"));
-            if (rs.getString("role").equals("ADMIN")) {
+            if ("ADMIN".equals(rs.getString("role"))) {
                 btn_form_users.setVisible(true);
                 btn_form_masuk.setVisible(false);
                 btn_form_keluar.setVisible(false);

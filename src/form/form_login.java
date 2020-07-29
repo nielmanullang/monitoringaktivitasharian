@@ -33,7 +33,6 @@ public class form_login extends javax.swing.JFrame {
      */
     public form_login() {
         initComponents();
-//        tf_password.setEchoChar('*');
         try {
             sql = "SELECT * FROM users where username='admin'";
             st = con.createStatement();
@@ -73,10 +72,7 @@ public class form_login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Maaf, Anda belum mengisi field Password");
         } else {
             try {
-                sql = "SELECT * FROM users "
-                        + "where username='" + username + "'";
-//                sql = "SELECT * FROM users "
-//                        + "where username='" + username + "' and password='" + password + "'";
+                sql = "SELECT * FROM users where username='" + username + "'";
                 st = con.createStatement();
                 rs = st.executeQuery(sql);
                 if (rs.first()) {

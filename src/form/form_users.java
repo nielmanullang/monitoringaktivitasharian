@@ -365,10 +365,10 @@ public class form_users extends javax.swing.JFrame {
                     if (rs.first()) {
                         JOptionPane.showMessageDialog(null, "Maaf, Username sudah digunakan");
                     } else {
-                        Integer role_id = role == "ADMIN" ? 1 : 2;
-                        sql = "INSERT INTO users (name, npk, position, password, role_id, username)"
-                                + "VALUE ('" + name + "','" + npk + "','" + position + "','" + encryptedPassword + "',"
-                                + "'" + role_id + "','" + username + "')";
+                        sql = "INSERT INTO users (name, npk, position, password, role_id, username) "
+                                + "SELECT '" + name + "','" + npk + "','" + position + "','" + encryptedPassword + "',"
+                                + "(SELECT id FROM roles where name ='"+role+"'),'" + username + "'";
+                        System.out.println("sql "+sql);
                         st = con.createStatement();
                         st.execute(sql);
                         Bersih();
@@ -440,8 +440,10 @@ public class form_users extends javax.swing.JFrame {
                 } else {
                     TrippleDes td = new TrippleDes();
                     String encryptedPassword = td.encrypt(password);
-                    Integer role_id = role == "ADMIN" ? 1 : 2;
-                    sql = "UPDATE users SET name='" + name + "', position='" + position + "', username='" + username + "' , password='" + encryptedPassword + "', role_id='" + role_id + "' where npk = '" + npk + "'";
+                    sql = "UPDATE users SET name='" + name + "', position='" + position + "', username='" + username 
+                            + "', password='" + encryptedPassword + "', role_id=(SELECT id FROM roles where name ='"+role+"')"
+                            + " where npk = '" + npk + "'";
+                    System.out.println("sql "+sql);
                     st = con.createStatement();
                     st.execute(sql);
                     Bersih();
