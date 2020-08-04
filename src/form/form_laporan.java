@@ -6,25 +6,35 @@
 package form;
 
 import java.awt.HeadlessException;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import koneksi.koneksi;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -73,7 +83,6 @@ public class form_laporan extends javax.swing.JFrame {
     }
 
     private void TampilData() {
-        System.out.println("role " + role);
         DefaultTableModel datalist = new DefaultTableModel();
         datalist.addColumn("NPK");
         datalist.addColumn("Name");
@@ -89,10 +98,8 @@ public class form_laporan extends javax.swing.JFrame {
                 sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
                         + "FROM activities a INNER JOIN users u on u.id=a.user_id WHERE a.user_id=" + user_id;
             }
-            System.out.println("sql " + sql);
             st = con.createStatement();
             rs = st.executeQuery(sql);
-            System.out.println("rs" + rs);
             while (rs.next()) {
                 datalist.addRow(new Object[]{
                     rs.getString("npk"), rs.getString("name"),
@@ -118,8 +125,7 @@ public class form_laporan extends javax.swing.JFrame {
 
         npk = tf_npk.getText();
         name = tf_name.getText();
-        start_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_start_date.getDate()));
-        end_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_end_date.getDate()));
+
         String whereClause = "";
         if (role.equals("KARYAWAN")) {
             if (whereClause.equals("")) {
@@ -140,14 +146,16 @@ public class form_laporan extends javax.swing.JFrame {
                 whereClause += " AND u.name like '%" + name + "%'";
             }
         }
-        if (!start_date.equals("")) {
+        if (tf_start_date.getDate() != null) {
+            start_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_start_date.getDate()));
             if (whereClause.equals("")) {
                 whereClause += "a.start_time >= '" + start_date + "'";
             } else {
                 whereClause += "AND a.start_time >= '" + start_date + "'";
             }
         }
-        if (!end_date.equals("")) {
+        if (tf_end_date.getDate() != null) {
+            end_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_end_date.getDate()));
             if (whereClause.equals("")) {
                 whereClause += "a.end_time <= '" + end_date + "'";
             } else {
@@ -162,7 +170,7 @@ public class form_laporan extends javax.swing.JFrame {
                 sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
                         + "FROM activities a INNER JOIN users u on u.id=a.user_id";
             }
-            System.out.println("sql " + sql);
+
             st = con.createStatement();
             rs = st.executeQuery(sql);
             while (rs.next()) {
@@ -204,6 +212,7 @@ public class form_laporan extends javax.swing.JFrame {
         btn_export_pdf = new javax.swing.JButton();
         tf_start_date = new com.toedter.calendar.JDateChooser();
         tf_end_date = new com.toedter.calendar.JDateChooser();
+        btn_import_excel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -282,6 +291,13 @@ public class form_laporan extends javax.swing.JFrame {
             }
         });
 
+        btn_import_excel.setText("Import from Excel");
+        btn_import_excel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_import_excelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -319,8 +335,9 @@ public class form_laporan extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btn_export_excel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_export_pdf, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(16, Short.MAX_VALUE))
+                            .addComponent(btn_export_pdf, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btn_import_excel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -332,25 +349,31 @@ public class form_laporan extends javax.swing.JFrame {
                             .addComponent(tf_npk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
                         .addGap(5, 5, 5)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(tf_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_cancel)
-                            .addComponent(btn_export_pdf))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel3)
-                                .addComponent(btn_logout))
-                            .addComponent(tf_start_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel1)
+                                    .addComponent(tf_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btn_cancel))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel3)
+                                        .addComponent(btn_logout))
+                                    .addComponent(tf_start_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(31, 31, 31)
+                                .addComponent(btn_export_pdf))
+                            .addComponent(btn_export_excel))
                         .addGap(4, 4, 4)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(btn_exit)
-                            .addComponent(tf_end_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tf_end_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel4)
+                                .addComponent(btn_exit))))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btn_search)
-                        .addComponent(btn_export_excel)))
+                        .addComponent(btn_import_excel)))
                 .addGap(52, 52, 52)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
                 .addContainerGap())
@@ -400,8 +423,6 @@ public class form_laporan extends javax.swing.JFrame {
         // TODO add your handling code here:
         npk = tf_npk.getText();
         name = tf_name.getText();
-        start_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_start_date.getDate()));
-        end_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_end_date.getDate()));
         String whereClause = "";
         if (role.equals("KARYAWAN")) {
             if (whereClause.equals("")) {
@@ -422,14 +443,16 @@ public class form_laporan extends javax.swing.JFrame {
                 whereClause += " AND name like '%" + name + "%'";
             }
         }
-        if (!start_date.equals("")) {
+        if (tf_start_date.getDate() != null) {
+            start_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_start_date.getDate()));
             if (whereClause.equals("")) {
                 whereClause += "start_time >= '" + start_date + "'";
             } else {
                 whereClause += "AND start_time >= '" + start_date + "'";
             }
         }
-        if (!end_date.equals("")) {
+        if (tf_end_date.getDate() != null) {
+            end_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_end_date.getDate()));
             if (whereClause.equals("")) {
                 whereClause += "end_time <= '" + end_date + "'";
             } else {
@@ -443,7 +466,6 @@ public class form_laporan extends javax.swing.JFrame {
             sql = "SELECT u.npk, u.name, a.tasklist, a.result, a.start_time, a.end_time "
                     + "FROM activities a INNER JOIN users u on u.id=a.user_id";
         }
-        System.out.println("sql " + sql);
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new File("[B]export_output/excel[/B]"));
         int retrival = chooser.showSaveDialog(null);
@@ -502,6 +524,48 @@ public class form_laporan extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_export_pdfActionPerformed
 
+    private void btn_import_excelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_import_excelActionPerformed
+        // TODO add your handling code here:
+        File excelFile;
+        String defaultCurrentDirectoryPath = "/Users";
+        JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
+        excelFileChooser.setDialogTitle("Select Excel File");
+        FileNameExtensionFilter fnef = new FileNameExtensionFilter("EXCEL FILES", "xls");
+        excelFileChooser.setFileFilter(fnef);
+        int excelChooser = excelFileChooser.showOpenDialog(null);
+        if (excelChooser == JFileChooser.APPROVE_OPTION) {
+            try {
+                excelFile = excelFileChooser.getSelectedFile();
+                InputStream ExcelFileToRead = new FileInputStream(excelFile);
+                HSSFWorkbook wb = new HSSFWorkbook(ExcelFileToRead);
+
+                HSSFSheet sheet = wb.getSheetAt(0);
+                for (int row = 1; row <= sheet.getLastRowNum(); row++) {
+                    HSSFRow excelRow = sheet.getRow(row);
+
+                    HSSFCell excelNpk = excelRow.getCell(0);
+                    HSSFCell excelName = excelRow.getCell(1);
+                    HSSFCell excelStart = excelRow.getCell(2);
+                    HSSFCell excelEnd = excelRow.getCell(3);
+                    HSSFCell excelTasklist = excelRow.getCell(4);
+                    HSSFCell excelResult = excelRow.getCell(5);
+                    System.out.println("Npk " + excelNpk);
+                    System.out.println("Name " + excelName);
+                    System.out.println("Start " + excelStart);
+                    System.out.println("End " + excelEnd);
+                    System.out.println("Tasklist " + excelTasklist);
+                    System.out.println("Result " + excelResult);
+                    System.out.println();
+                }
+                System.out.println();
+
+                JOptionPane.showMessageDialog(null, "Imported Successfully !!.....");
+            } catch (IOException iOException) {
+                JOptionPane.showMessageDialog(null, iOException.getMessage());
+            }
+        }
+    }//GEN-LAST:event_btn_import_excelActionPerformed
+
 //    /**
 //     * @param args the command line arguments
 //     */
@@ -543,6 +607,7 @@ public class form_laporan extends javax.swing.JFrame {
     private javax.swing.JButton btn_exit;
     private javax.swing.JButton btn_export_excel;
     private javax.swing.JButton btn_export_pdf;
+    private javax.swing.JButton btn_import_excel;
     private javax.swing.JButton btn_logout;
     private javax.swing.JButton btn_search;
     private javax.swing.JLabel jLabel1;

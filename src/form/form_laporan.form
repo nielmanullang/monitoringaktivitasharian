@@ -66,10 +66,11 @@
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="btn_export_excel" max="32767" attributes="0"/>
                           <Component id="btn_export_pdf" max="32767" attributes="0"/>
+                          <Component id="btn_import_excel" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace pref="16" max="32767" attributes="0"/>
+              <EmptySpace pref="10" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -84,30 +85,40 @@
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tf_name" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btn_cancel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btn_export_pdf" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btn_logout" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="tf_name" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btn_cancel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="btn_logout" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="tf_start_date" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
-                          <Component id="tf_start_date" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="31" pref="31" max="-2" attributes="0"/>
+                              <Component id="btn_export_pdf" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="btn_export_excel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btn_exit" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="tf_end_date" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btn_exit" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btn_search" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btn_export_excel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_import_excel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
@@ -259,6 +270,14 @@
     <Component class="com.toedter.calendar.JDateChooser" name="tf_start_date">
     </Component>
     <Component class="com.toedter.calendar.JDateChooser" name="tf_end_date">
+    </Component>
+    <Component class="javax.swing.JButton" name="btn_import_excel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Import from Excel"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_import_excelActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
