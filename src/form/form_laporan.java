@@ -46,8 +46,7 @@ public class form_laporan extends javax.swing.JFrame {
     private String sql = "";
     public static Integer user_id;
     public static String role;
-    private String name, npk, start_date, end_date, ext, path, filename;
-    public static final String DEST = "/Users/danielmanullang/simple_table.pdf";
+    private String name, npk, start_date, end_date;
 
     /**
      * @param user_id
@@ -113,15 +112,7 @@ public class form_laporan extends javax.swing.JFrame {
         }
     }
 
-    public void searchData() {
-        DefaultTableModel datalist = new DefaultTableModel();
-        datalist.addColumn("NPK");
-        datalist.addColumn("Name");
-        datalist.addColumn("Start Time");
-        datalist.addColumn("End Time");
-        datalist.addColumn("Tasklist");
-        datalist.addColumn("Result");
-
+    public void querySearchData() {
         npk = tf_npk.getText();
         name = tf_name.getText();
 
@@ -161,17 +152,33 @@ public class form_laporan extends javax.swing.JFrame {
                 whereClause += " AND a.end_time <= '" + end_date + "'";
             }
         }
-        try {
-            if (!whereClause.equals("")) {
-                sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
-                        + "FROM activities a INNER JOIN users u on u.id=a.user_id where " + whereClause;
-            } else {
-                sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
-                        + "FROM activities a INNER JOIN users u on u.id=a.user_id";
-            }
+        if (!whereClause.equals("")) {
+            sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
+                    + "FROM activities a INNER JOIN users u on u.id=a.user_id where " + whereClause;
+        } else {
+            sql = "SELECT u.name, u.npk, a.tasklist, a.result, a.start_time, a.end_time "
+                    + "FROM activities a INNER JOIN users u on u.id=a.user_id";
+        }
 
+        try {
             st = con.createStatement();
             rs = st.executeQuery(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(form_laporan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void searchData() {
+        DefaultTableModel datalist = new DefaultTableModel();
+        datalist.addColumn("NPK");
+        datalist.addColumn("Name");
+        datalist.addColumn("Start Time");
+        datalist.addColumn("End Time");
+        datalist.addColumn("Tasklist");
+        datalist.addColumn("Result");
+
+        try {
+            querySearchData();
             while (rs.next()) {
                 datalist.addRow(new Object[]{
                     rs.getString("npk"), rs.getString("name"),
@@ -420,58 +427,12 @@ public class form_laporan extends javax.swing.JFrame {
 
     private void btn_export_excelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_export_excelActionPerformed
         // TODO add your handling code here:
-        npk = tf_npk.getText();
-        name = tf_name.getText();
-        String whereClause = "";
-        if (role.equals("KARYAWAN")) {
-            if (whereClause.equals("")) {
-                whereClause += "a.user_id=" + user_id;
-            }
-        }
-        if (!npk.equals("")) {
-            if (whereClause.equals("")) {
-                whereClause += "npk='" + npk + "'";
-            } else {
-                whereClause += " AND npk = '" + npk + "'";
-            }
-        }
-        if (!name.equals("")) {
-            if (whereClause.equals("")) {
-                whereClause += "name like '%" + name + "%'";
-            } else {
-                whereClause += " AND name like '%" + name + "%'";
-            }
-        }
-        if (tf_start_date.getDate() != null) {
-            start_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_start_date.getDate()));
-            if (whereClause.equals("")) {
-                whereClause += "start_time >= '" + start_date + "'";
-            } else {
-                whereClause += "AND start_time >= '" + start_date + "'";
-            }
-        }
-        if (tf_end_date.getDate() != null) {
-            end_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_end_date.getDate()));
-            if (whereClause.equals("")) {
-                whereClause += "end_time <= '" + end_date + "'";
-            } else {
-                whereClause += " AND end_time <= '" + end_date + "'";
-            }
-        }
-        if (!whereClause.equals("")) {
-            sql = "SELECT u.npk,u.name,  a.tasklist, a.result, a.start_time, a.end_time "
-                    + "FROM activities a INNER JOIN users u on u.id=a.user_id where " + whereClause;
-        } else {
-            sql = "SELECT u.npk, u.name, a.tasklist, a.result, a.start_time, a.end_time "
-                    + "FROM activities a INNER JOIN users u on u.id=a.user_id";
-        }
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new File("[B]export_output/excel[/B]"));
         int retrival = chooser.showSaveDialog(null);
         if (retrival == JFileChooser.APPROVE_OPTION) {
             try {
-                st = con.createStatement();
-                rs = st.executeQuery(sql);
+                querySearchData();
 
                 HSSFWorkbook workbook = new HSSFWorkbook();
                 HSSFSheet sheet = workbook.createSheet("report");
@@ -521,80 +482,40 @@ public class form_laporan extends javax.swing.JFrame {
 
     private void btn_export_pdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_export_pdfActionPerformed
         // TODO add your handling code here:
-        try {
-            npk = tf_npk.getText();
-            name = tf_name.getText();
-            String whereClause = "";
-            if (role.equals("KARYAWAN")) {
-                if (whereClause.equals("")) {
-                    whereClause += "a.user_id=" + user_id;
-                }
-            }
-            if (!npk.equals("")) {
-                if (whereClause.equals("")) {
-                    whereClause += "npk='" + npk + "'";
-                } else {
-                    whereClause += " AND npk = '" + npk + "'";
-                }
-            }
-            if (!name.equals("")) {
-                if (whereClause.equals("")) {
-                    whereClause += "name like '%" + name + "%'";
-                } else {
-                    whereClause += " AND name like '%" + name + "%'";
-                }
-            }
-            if (tf_start_date.getDate() != null) {
-                start_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_start_date.getDate()));
-                if (whereClause.equals("")) {
-                    whereClause += "start_time >= '" + start_date + "'";
-                } else {
-                    whereClause += "AND start_time >= '" + start_date + "'";
-                }
-            }
-            if (tf_end_date.getDate() != null) {
-                end_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_end_date.getDate()));
-                if (whereClause.equals("")) {
-                    whereClause += "end_time <= '" + end_date + "'";
-                } else {
-                    whereClause += " AND end_time <= '" + end_date + "'";
-                }
-            }
-            if (!whereClause.equals("")) {
-                sql = "SELECT u.npk,u.name,  a.tasklist, a.result, a.start_time, a.end_time "
-                        + "FROM activities a INNER JOIN users u on u.id=a.user_id where " + whereClause;
-            } else {
-                sql = "SELECT u.npk, u.name, a.tasklist, a.result, a.start_time, a.end_time "
-                        + "FROM activities a INNER JOIN users u on u.id=a.user_id";
-            }
-            st = con.createStatement();
-            rs = st.executeQuery(sql);
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("[B]export_output/excel[/B]"));
+        int retrival = chooser.showSaveDialog(null);
+        if (retrival == JFileChooser.APPROVE_OPTION) {
+            try {
+                querySearchData();
 
-            File file = new File(DEST);
-            file.getParentFile().mkdirs();
-            Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(DEST));
-            document.open();
-            PdfPTable table = new PdfPTable(6);
-            table.addCell("NPK");
-            table.addCell("Name");
-            table.addCell("Start Time");
-            table.addCell("End Time");
-            table.addCell("Tasklist");
-            table.addCell("Result");
-            while (rs.next()) {
-                table.addCell(rs.getString("npk"));
-                table.addCell(rs.getString("name"));
-                table.addCell(rs.getString("start_time"));
-                table.addCell(rs.getString("end_time"));
-                table.addCell(rs.getString("tasklist"));
-                table.addCell(rs.getString("result"));
+                File file = new File(chooser.getSelectedFile() + ".pdf");
+                file.getParentFile().mkdirs();
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(chooser.getSelectedFile() + ".pdf"));
+                document.open();
+                PdfPTable tabel = new PdfPTable(6);
+                tabel.addCell("NPK");
+                tabel.addCell("Name");
+                tabel.addCell("Start Time");
+                tabel.addCell("End Time");
+                tabel.addCell("Tasklist");
+                tabel.addCell("Result");
+                while (rs.next()) {
+                    tabel.addCell(rs.getString("npk"));
+                    tabel.addCell(rs.getString("name"));
+                    tabel.addCell(rs.getString("start_time"));
+                    tabel.addCell(rs.getString("end_time"));
+                    tabel.addCell(rs.getString("tasklist"));
+                    tabel.addCell(rs.getString("result"));
+                }
+                document.add(tabel);
+                document.close();
+            } catch (FileNotFoundException | DocumentException | SQLException ex) {
+                Logger.getLogger(form_laporan.class.getName()).log(Level.SEVERE, null, ex);
             }
-            document.add(table);
-            document.close();
-        } catch (FileNotFoundException | DocumentException | SQLException ex) {
-            Logger.getLogger(form_laporan.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }//GEN-LAST:event_btn_export_pdfActionPerformed
 
     private void btn_import_excelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_import_excelActionPerformed
