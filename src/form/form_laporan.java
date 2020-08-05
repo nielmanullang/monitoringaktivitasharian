@@ -5,6 +5,10 @@
  */
 package form;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,6 +47,7 @@ public class form_laporan extends javax.swing.JFrame {
     public static Integer user_id;
     public static String role;
     private String name, npk, start_date, end_date, ext, path, filename;
+    public static final String DEST = "/Users/danielmanullang/simple_table.pdf";
 
     /**
      * @param user_id
@@ -516,6 +521,80 @@ public class form_laporan extends javax.swing.JFrame {
 
     private void btn_export_pdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_export_pdfActionPerformed
         // TODO add your handling code here:
+        try {
+            npk = tf_npk.getText();
+            name = tf_name.getText();
+            String whereClause = "";
+            if (role.equals("KARYAWAN")) {
+                if (whereClause.equals("")) {
+                    whereClause += "a.user_id=" + user_id;
+                }
+            }
+            if (!npk.equals("")) {
+                if (whereClause.equals("")) {
+                    whereClause += "npk='" + npk + "'";
+                } else {
+                    whereClause += " AND npk = '" + npk + "'";
+                }
+            }
+            if (!name.equals("")) {
+                if (whereClause.equals("")) {
+                    whereClause += "name like '%" + name + "%'";
+                } else {
+                    whereClause += " AND name like '%" + name + "%'";
+                }
+            }
+            if (tf_start_date.getDate() != null) {
+                start_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_start_date.getDate()));
+                if (whereClause.equals("")) {
+                    whereClause += "start_time >= '" + start_date + "'";
+                } else {
+                    whereClause += "AND start_time >= '" + start_date + "'";
+                }
+            }
+            if (tf_end_date.getDate() != null) {
+                end_date = (new SimpleDateFormat("yyyy-MM-dd").format(tf_end_date.getDate()));
+                if (whereClause.equals("")) {
+                    whereClause += "end_time <= '" + end_date + "'";
+                } else {
+                    whereClause += " AND end_time <= '" + end_date + "'";
+                }
+            }
+            if (!whereClause.equals("")) {
+                sql = "SELECT u.npk,u.name,  a.tasklist, a.result, a.start_time, a.end_time "
+                        + "FROM activities a INNER JOIN users u on u.id=a.user_id where " + whereClause;
+            } else {
+                sql = "SELECT u.npk, u.name, a.tasklist, a.result, a.start_time, a.end_time "
+                        + "FROM activities a INNER JOIN users u on u.id=a.user_id";
+            }
+            st = con.createStatement();
+            rs = st.executeQuery(sql);
+
+            File file = new File(DEST);
+            file.getParentFile().mkdirs();
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(DEST));
+            document.open();
+            PdfPTable table = new PdfPTable(6);
+            table.addCell("NPK");
+            table.addCell("Name");
+            table.addCell("Start Time");
+            table.addCell("End Time");
+            table.addCell("Tasklist");
+            table.addCell("Result");
+            while (rs.next()) {
+                table.addCell(rs.getString("npk"));
+                table.addCell(rs.getString("name"));
+                table.addCell(rs.getString("start_time"));
+                table.addCell(rs.getString("end_time"));
+                table.addCell(rs.getString("tasklist"));
+                table.addCell(rs.getString("result"));
+            }
+            document.add(table);
+            document.close();
+        } catch (FileNotFoundException | DocumentException | SQLException ex) {
+            Logger.getLogger(form_laporan.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_export_pdfActionPerformed
 
     private void btn_import_excelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_import_excelActionPerformed
