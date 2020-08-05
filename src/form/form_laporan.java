@@ -6,7 +6,6 @@
 package form;
 
 import java.awt.HeadlessException;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,7 +18,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -31,10 +29,6 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -549,19 +543,50 @@ public class form_laporan extends javax.swing.JFrame {
                     HSSFCell excelEnd = excelRow.getCell(3);
                     HSSFCell excelTasklist = excelRow.getCell(4);
                     HSSFCell excelResult = excelRow.getCell(5);
-                    System.out.println("Npk " + excelNpk);
-                    System.out.println("Name " + excelName);
-                    System.out.println("Start " + excelStart);
-                    System.out.println("End " + excelEnd);
-                    System.out.println("Tasklist " + excelTasklist);
-                    System.out.println("Result " + excelResult);
-                    System.out.println();
+                    if (role.equals("ADMIN")) {
+                        // Admin upload excel untuk menambahkan activities Karyawan
+                        sql = "SELECT * FROM activities a INNER JOIN users u on u.id=a.user_id WHERE u.npk='" + excelNpk + "' and DATE(a.start_time) = '" + excelStart.toString().substring(0, 10) + "'";
+                        st = con.createStatement();
+                        rs = st.executeQuery(sql);
+                        if (rs.first()) {
+                            JOptionPane.showMessageDialog(null, "NPK " + excelNpk + " sudah memiliki activities tanggal " + excelStart.toString().substring(0, 10));
+                        } else {
+                            sql = "INSERT INTO activities (start_time, tasklist, user_id) "
+                                    + "SELECT '" + excelStart.toString().substring(0, 19) + "','" + excelTasklist + "',"
+                                    + "(SELECT id FROM users where npk =" + excelNpk + ")";
+                            st = con.createStatement();
+                            st.execute(sql);
+                            JOptionPane.showMessageDialog(null, "NPK " + excelNpk + " tanggal " + excelStart.toString().substring(0, 10) + " Data Berhasil disimpan");
+                        }
+                    } else {
+                        // Karyawan upload excel untuk mengupdate result dan end datetime
+                        String dateNow = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                        System.out.println("a " + dateNow);
+                        System.out.println("b " + excelEnd.toString().substring(0, 10));
+                        if (dateNow.equals(excelEnd.toString().substring(0, 10))) {
+                            sql = "SELECT * FROM activities WHERE user_id=" + user_id + " and DATE(start_time) = '" + dateNow + "'";
+                            System.out.println("sql1 " + sql);
+                            st = con.createStatement();
+                            rs = st.executeQuery(sql);
+                            if (rs.first() && dateNow.equals(excelEnd.toString().substring(0, 10))) {
+                                sql = "UPDATE activities SET result='" + excelResult + "', end_time='" + excelEnd.toString().substring(0, 19)
+                                        + "' where user_id = " + user_id + " and DATE(start_time) = '" + dateNow + "'";
+                                st = con.createStatement();
+                                st.execute(sql);
+                                JOptionPane.showMessageDialog(null, "Data Berhasil diupdate");
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Anda tidak memiliki activity yang Result-nya belum dilengkapi pada hari ini");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Data pada excel row " + row + " tidak memiliki tanggal hari ini");
+                        }
+                    }
+                    searchData();
                 }
-                System.out.println();
-
-                JOptionPane.showMessageDialog(null, "Imported Successfully !!.....");
             } catch (IOException iOException) {
                 JOptionPane.showMessageDialog(null, iOException.getMessage());
+            } catch (SQLException ex) {
+                Logger.getLogger(form_laporan.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_btn_import_excelActionPerformed
