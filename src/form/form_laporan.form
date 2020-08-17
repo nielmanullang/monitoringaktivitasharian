@@ -276,6 +276,7 @@
         <Property name="text" type="java.lang.String" value="Import from Excel"/>
       </Properties>
       <Events>
+        <EventHandler event="ancestorAdded" listener="javax.swing.event.AncestorListener" parameters="javax.swing.event.AncestorEvent" handler="btn_import_excelAncestorAdded"/>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_import_excelActionPerformed"/>
       </Events>
     </Component>

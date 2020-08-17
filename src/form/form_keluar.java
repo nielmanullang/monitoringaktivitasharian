@@ -243,8 +243,9 @@ public class form_keluar extends javax.swing.JFrame {
         // TODO add your handling code here:
         result = String.valueOf(tf_result.getText());
         try {
+            String dateNow = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
             sql = "UPDATE activities SET end_time = '" + end_time_hidden + "', result= '" + result + "'"
-                    + "WHERE user_id= '" + user_id + "'";
+                    + "WHERE user_id= '" + user_id + "' and DATE(start_time) = '" + dateNow + "'";
             st = con.createStatement();
             st.execute(sql);
             JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan");

@@ -298,6 +298,15 @@ public class form_laporan extends javax.swing.JFrame {
         });
 
         btn_import_excel.setText("Import from Excel");
+        btn_import_excel.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                btn_import_excelAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
         btn_import_excel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_import_excelActionPerformed(evt);
@@ -561,11 +570,8 @@ public class form_laporan extends javax.swing.JFrame {
                     } else {
                         // Karyawan upload excel untuk mengupdate result dan end datetime
                         String dateNow = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                        System.out.println("a " + dateNow);
-                        System.out.println("b " + excelEnd.toString().substring(0, 10));
-                        if (dateNow.equals(excelEnd.toString().substring(0, 10))) {
+                        if (excelEnd != null && dateNow.equals(excelEnd.toString().substring(0, 10))) {
                             sql = "SELECT * FROM activities WHERE user_id=" + user_id + " and DATE(start_time) = '" + dateNow + "'";
-                            System.out.println("sql1 " + sql);
                             st = con.createStatement();
                             rs = st.executeQuery(sql);
                             if (rs.first() && dateNow.equals(excelEnd.toString().substring(0, 10))) {
@@ -590,6 +596,10 @@ public class form_laporan extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btn_import_excelActionPerformed
+
+    private void btn_import_excelAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_btn_import_excelAncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_import_excelAncestorAdded
 
 //    /**
 //     * @param args the command line arguments

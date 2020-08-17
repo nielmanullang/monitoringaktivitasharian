@@ -42,7 +42,7 @@ public class form_login extends javax.swing.JFrame {
                 TrippleDes td = new TrippleDes();
                 String encryptedPassword = td.encrypt("password");
                 sql = "INSERT INTO users (name, npk, position, password, role_id, username)"
-                        + "VALUE ('Admin','0000','Administrator','" + encryptedPassword + "',"
+                        + "VALUE ('Administrator','0000','Administrator','" + encryptedPassword + "',"
                         + role_id + ",'admin')";
                 st = con.createStatement();
                 st.execute(sql);
@@ -78,7 +78,6 @@ public class form_login extends javax.swing.JFrame {
                 if (rs.first()) {
                     TrippleDes td = new TrippleDes();
                     String decryptPassword = td.decrypt(rs.getString("password"));
-                    System.out.println("decryptPassword " + decryptPassword);
                     if (decryptPassword != null && decryptPassword.equals(password)) {
                         menu_utama r = new menu_utama(rs.getInt("id"));
                         r.setVisible(true);

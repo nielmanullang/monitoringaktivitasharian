@@ -38,17 +38,14 @@ public class menu_utama extends javax.swing.JFrame {
         rs = st.executeQuery(sql);
         if (rs.first()) {
             text_name.setText(rs.getString("name"));
-            System.out.println("role " + rs.getString("role"));
             if ("ADMIN".equals(rs.getString("role"))) {
                 btn_form_users.setVisible(true);
                 btn_form_masuk.setVisible(false);
                 btn_form_keluar.setVisible(false);
             } else {
                 sql = "SELECT * FROM activities where user_id=" + user_id + " and end_time is null";
-                System.out.println("sql " + sql);
                 st = con.createStatement();
                 rs = st.executeQuery(sql);
-                System.out.println("rs.first() " + rs.first());
                 btn_form_users.setVisible(false);
                 if (rs.first()) {
                     btn_form_masuk.setVisible(false);

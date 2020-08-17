@@ -38,7 +38,6 @@ public class form_masuk extends javax.swing.JFrame {
     public form_masuk(Integer user_id) throws SQLException {
         initComponents();
         setUserId(user_id);
-        System.out.println("user_id " + user_id);
         sql = "SELECT * FROM users where id='" + user_id + "'";
         st = con.createStatement();
         rs = st.executeQuery(sql);
@@ -211,7 +210,6 @@ public class form_masuk extends javax.swing.JFrame {
         try {
             sql = "INSERT INTO activities (start_time, tasklist, user_id) "
                     + "VALUE ('" + start_time_hidden + "','" + tasklist + "'," + user_id + ")";
-            System.out.println("sql" + sql);
             st = con.createStatement();
             st.execute(sql);
             JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan");

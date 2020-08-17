@@ -134,6 +134,11 @@ public class form_users extends javax.swing.JFrame {
 
         jLabel6.setText("Role");
 
+        tf_npk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tf_npkActionPerformed(evt);
+            }
+        });
         tf_npk.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 tf_npkKeyPressed(evt);
@@ -368,7 +373,6 @@ public class form_users extends javax.swing.JFrame {
                         sql = "INSERT INTO users (name, npk, position, password, role_id, username) "
                                 + "SELECT '" + name + "','" + npk + "','" + position + "','" + encryptedPassword + "',"
                                 + "(SELECT id FROM roles where name ='"+role+"'),'" + username + "'";
-                        System.out.println("sql "+sql);
                         st = con.createStatement();
                         st.execute(sql);
                         Bersih();
@@ -394,7 +398,6 @@ public class form_users extends javax.swing.JFrame {
                         + "where u.npk='" + npk + "'";
                 st = con.createStatement();
                 rs = st.executeQuery(sql);
-                System.out.println("sql " + sql);
                 if (rs.first()) {
                     TrippleDes td = new TrippleDes();
                     String decryptPassword = td.decrypt(rs.getString("password"));
@@ -404,7 +407,6 @@ public class form_users extends javax.swing.JFrame {
                     tf_password.setText(decryptPassword);
                     tf_password.disable();
                     cb_role.setSelectedItem(rs.getString("role"));
-                    JOptionPane.showMessageDialog(null, "Data ditemukan");
                 } else {
                     tf_password.enable();
                     JOptionPane.showMessageDialog(null, "Data tidak ditemukan");
@@ -432,7 +434,6 @@ public class form_users extends javax.swing.JFrame {
         } else {
             try {
                 sql = "SELECT * FROM users where username='" + username + "' and npk!='" + npk + "'";
-                System.out.println("sql "+sql);
                 st = con.createStatement();
                 rs = st.executeQuery(sql);
                 if (rs.first()) {
@@ -443,7 +444,6 @@ public class form_users extends javax.swing.JFrame {
                     sql = "UPDATE users SET name='" + name + "', position='" + position + "', username='" + username 
                             + "', password='" + encryptedPassword + "', role_id=(SELECT id FROM roles where name ='"+role+"')"
                             + " where npk = '" + npk + "'";
-                    System.out.println("sql "+sql);
                     st = con.createStatement();
                     st.execute(sql);
                     Bersih();
@@ -483,6 +483,10 @@ public class form_users extends javax.swing.JFrame {
         // TODO add your handling code here:
         System.out.println("row " + table.rowAtPoint(evt.getPoint()));
     }//GEN-LAST:event_tableMouseWheelMoved
+
+    private void tf_npkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_npkActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tf_npkActionPerformed
 
 //    /**
 //     * @param args the command line arguments
